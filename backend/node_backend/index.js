@@ -3,6 +3,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const WebSocket = require("ws");
 const cors = require('cors');
+const { SocketAddress } = require('net');
 
 const app = express();
 const server = http.createServer(app);
@@ -32,10 +33,12 @@ let klineWebSocket = null;
 io.on("connection", (socket) => {
     console.log("✅ User connected");
     clientsConnected++;
-
-    if (clientsConnected === 1) {
-        startTickerStream();
-    }
+    socket.on('duration_ticker',(data)=>{
+        if (clientsConnected === 1) {
+            startTickerStream(data);
+        }
+    })
+    
     socket.on('selectCoin',(coin)=>{
         console.log(`User selected ${coin}`)
         // if (klineWebSocket !==null){
@@ -71,9 +74,10 @@ async function startKlineStream(coin){
         console.log("🔴 Kline WebSocket closed");
     };
 }
-function startTickerStream() {
+function startTickerStream(interval) {
     console.log("📡 Start 24-hour ticker stream...");
-    const streamNames = coins.map(coin => `${coin}@ticker`).join("/");
+    const streamNames = coins.map(coin => `${coin}@ticker_${interval}`).join("/");
+    console.log('streamName--->',streamNames)
     tickerWebSocket = new WebSocket(`${tickersUrl}/${streamNames}`);
 
     tickerWebSocket.onmessage = (event) => {
