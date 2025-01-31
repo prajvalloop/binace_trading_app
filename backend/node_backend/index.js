@@ -59,7 +59,7 @@ io.on("connection", (socket) => {
 async function startKlineStream(coin){
     // const historicalData = await fetchHistoricalData(coin);
     // io.emit("historicalKlineData", historicalData);
-    klineWebSocket = new WebSocket(`${tickersUrl}/${coin}@kline_1s`);
+    klineWebSocket = new WebSocket(`${tickersUrl}/${coin}@kline_1m`);
     klineWebSocket.onmessage = (event) => {
         const data = JSON.parse(event.data);
         io.emit("klineData", data);
@@ -106,7 +106,7 @@ function stopKlineStream() {
 }
 async function fetchHistoricalData(coin){
     try{
-        const response = await fetch(`${historicalDataUrl}?symbol=${coin.toUpperCase()}&interval=1s&limit=100`);    
+        const response = await fetch(`${historicalDataUrl}?symbol=${coin.toUpperCase()}&interval=1m&limit=100`);    
         const data = await response.json();
         const historicalData = [];
         for (let i = 0; i < data.length; i++) {
