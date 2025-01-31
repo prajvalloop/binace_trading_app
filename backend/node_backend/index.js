@@ -16,7 +16,7 @@ app.use(cors({
 
 const io = new Server(server, {
     cors: {
-        origin: ["http://localhost:5175", "https://video.devsonline.in"],
+        origin: ["http://localhost:5175", "https://video.devsonline.in","http://localhost:5173"],
         methods: ["GET", "POST"],
         
     }
