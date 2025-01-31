@@ -37,6 +37,9 @@ io.on("connection", (socket) => {
     }
     socket.on('selectCoin',(coin)=>{
         console.log(`User selected ${coin}`)
+        // if (klineWebSocket !==null){
+        //     stopKlineStream()
+        // }
         // stopTickerStream();
         startKlineStream(coin)
 
@@ -53,7 +56,7 @@ io.on("connection", (socket) => {
 
 
 function startKlineStream(coin){
-    klineWebSocket = new WebSocket(`${tickersUrl}/${coin}@kline_1m`);
+    klineWebSocket = new WebSocket(`${tickersUrl}/${coin}@kline_1s`);
     klineWebSocket.onmessage = (event) => {
         const data = JSON.parse(event.data);
         io.emit("klineData", data);
