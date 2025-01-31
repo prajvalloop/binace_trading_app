@@ -136,7 +136,8 @@ const WebSocket = require("ws");
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors: { origin: "*" }  // Allow frontend connections
+    cors: {  origin: ["http://localhost:5175", "https://video.devsonline.in"],  
+        methods: ["GET", "POST"]}  // Allow frontend connections
 });
 const tickersUrl = "wss://stream.binance.com:9443/ws";
 const coins = ["btcusdt", "ethusdt", "bnbusdt", "xrpusdt", "adausdt", "dogeusdt", "solusdt", "dotusdt", "ltcusdt", "linkusdt"];
