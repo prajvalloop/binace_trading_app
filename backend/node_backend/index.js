@@ -136,7 +136,7 @@ const WebSocket = require("ws");
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors: {  origin: ["http://localhost:5175", "https://video.devsonline.in"],  
+    cors: {  origin: ["http://localhost:5175", "http://video.devsonline.in","*"],  
         methods: ["GET", "POST"]}  // Allow frontend connections
 });
 const tickersUrl = "wss://stream.binance.com:9443/ws";
