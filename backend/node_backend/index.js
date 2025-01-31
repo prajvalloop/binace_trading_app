@@ -41,13 +41,13 @@ io.on("connection", (socket) => {
         }
     })
     
-    socket.on('selectCoin',({coin,interval})=>{
-        console.log(`User selected ${coin} ${interval}`)
+    socket.on('selectCoin',(coin)=>{
+        console.log(`User selected ${coin}`)
         // if (klineWebSocket !==null){
         //     stopKlineStream()
         // }
         // stopTickerStream();
-        startKlineStream(coin,interval)
+        startKlineStream(coin)
 
     })
     socket.on("disconnect", () => {
@@ -61,10 +61,10 @@ io.on("connection", (socket) => {
 });
 
 
-async function startKlineStream(coin,interval){
+async function startKlineStream(coin){
     // const historicalData = await fetchHistoricalData(coin);
     // io.emit("historicalKlineData", historicalData);
-    klineWebSocket = new WebSocket(`${tickersUrl}/${coin}@kline_${interval}`);
+    klineWebSocket = new WebSocket(`${tickersUrl}/${coin}@kline`);
     klineWebSocket.onmessage = (event) => {
         const data = JSON.parse(event.data);
         io.emit("klineData", data);
