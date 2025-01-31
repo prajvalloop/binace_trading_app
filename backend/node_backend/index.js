@@ -37,7 +37,7 @@ io.on("connection", (socket) => {
     }
     socket.on('selectCoin',(coin)=>{
         console.log(`User selected ${coin}`)
-        stopTickerStream();
+        // stopTickerStream();
         startKlineStream(coin)
 
     })
