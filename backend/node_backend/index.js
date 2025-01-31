@@ -117,7 +117,7 @@ async function fetchHistoricalData(coin){
                 l: data[i][3],
                 c: data[i][4],
                 volume: data[i][5],
-                c: data[i][6],
+                closingtime: data[i][6],
                 x:true
             }});
         }
