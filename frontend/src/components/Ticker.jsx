@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import {io} from 'socket.io-client'
 
-const URL='http://videos.devsonline.in:3000'
+const URL='http://video.devsonline.in:3000'
 
 const Ticker = () => {
     useEffect(()=>{

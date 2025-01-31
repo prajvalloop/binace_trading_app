@@ -26,7 +26,8 @@ const tickersUrl = "wss://stream.binance.com:9443/ws";
 const coins = ["btcusdt", "ethusdt", "bnbusdt", "xrpusdt", "adausdt", "dogeusdt", "solusdt", "dotusdt", "ltcusdt", "linkusdt"];
 
 let clientsConnected = 0;
-
+let tickerWebSocket = null;
+let klineWebSocket = null;
 io.on("connection", (socket) => {
     console.log("✅ User connected");
     clientsConnected++;
@@ -34,18 +35,36 @@ io.on("connection", (socket) => {
     if (clientsConnected === 1) {
         startTickerStream();
     }
+    socket.on('selectCoin',(coin)=>{
+        console.log(`User selected ${coin}`)
+        stopTickerStream();
+        startKlineStream(coin)
 
+    })
     socket.on("disconnect", () => {
-        console.log("❌ User disconnected");
+        console.log(" User disconnected");
         clientsConnected--;
         if (clientsConnected === 0) {
             stopTickerStream();
+            stopKlineStream();
         }
     });
 });
 
-let tickerWebSocket = null;
 
+function startKlineStream(coin){
+    klineWebSocket = new WebSocket(`${tickersUrl}/${coin}@kline_1m`);
+    klineWebSocket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        io.emit("klineData", data);
+    };
+    klineWebSocket.onerror = (error) => {
+        console.error(`Kline WebSocket Error: ${error.message}`);
+    };
+    klineWebSocket.onclose = () => {
+        console.log("🔴 Kline WebSocket closed");
+    };
+}
 function startTickerStream() {
     console.log("📡 Start 24-hour ticker stream...");
     const streamNames = coins.map(coin => `${coin}@ticker`).join("/");
@@ -69,10 +88,16 @@ function stopTickerStream() {
     if (tickerWebSocket) {
         tickerWebSocket.close();
         tickerWebSocket = null;
-        console.log("🛑 Stopped 24-hour ticker stream");
+        console.log("Stopped 24-hour ticker stream");
     }
 }
-
+function stopKlineStream() {
+    if (klineWebSocket) {
+        klineWebSocket.close();
+        klineWebSocket = null;
+        console.log(" Stopped Kline data stream");
+    }
+}
 server.listen(3000, () => {
     console.log("✅ Server running on http://localhost:3000");
 });
