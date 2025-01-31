@@ -23,6 +23,7 @@ const io = new Server(server, {
 });
 
 const tickersUrl = "wss://stream.binance.com:9443/ws";
+const historicalDataUrl = "https://api.binance.com/api/v3/klines";
 const coins = ["btcusdt", "ethusdt", "bnbusdt", "xrpusdt", "adausdt", "dogeusdt", "solusdt", "dotusdt", "ltcusdt", "linkusdt"];
 
 let clientsConnected = 0;
@@ -55,7 +56,9 @@ io.on("connection", (socket) => {
 });
 
 
-function startKlineStream(coin){
+async function startKlineStream(coin){
+    // const historicalData = await fetchHistoricalData(coin);
+    // io.emit("historicalKlineData", historicalData);
     klineWebSocket = new WebSocket(`${tickersUrl}/${coin}@kline_1s`);
     klineWebSocket.onmessage = (event) => {
         const data = JSON.parse(event.data);
@@ -101,6 +104,45 @@ function stopKlineStream() {
         console.log(" Stopped Kline data stream");
     }
 }
+async function fetchHistoricalData(coin){
+    try{
+        const response = await fetch(`${historicalDataUrl}?symbol=${coin.toUpperCase()}&interval=1s&limit=100`);    
+        const data = await response.json();
+        const historicalData = [];
+        for (let i = 0; i < data.length; i++) {
+            historicalData.push({k:{
+                t: data[i][0],
+                o: data[i][1],
+                h: data[i][2],
+                l: data[i][3],
+                c: data[i][4],
+                volume: data[i][5],
+                c: data[i][6],
+                x:true
+            }});
+        }
+        return historicalData;
+}catch(error){
+    console.error(`Error fetching historical data for ${coin}:`, error);
+    return [];
+}
+}
+app.get("/historical_data", async (req, res) => {
+    const { coin } = req.query; 
+
+    if (!coin) {
+        return res.status(400).json({ error: "Coin parameter is required" });
+    }
+
+    try {
+        const historicalData = await fetchHistoricalData(coin);
+        return res.json(historicalData);
+    } catch (error) {
+        return res.status(500).json({ error: "Failed to fetch historical data" });
+    }
+});
+
+
 server.listen(3000, () => {
     console.log("✅ Server running on http://localhost:3000");
 });
