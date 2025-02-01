@@ -25,21 +25,30 @@ SECRET_KEY = 'django-insecure-ffy_ivcfl^87glznrdusa7#lkt1@tmtvl)&j@sebum&z442**h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+CORS_ALLOW_ALL_ORIGINS = True  # Set to True if you want to allow all origins (not recommended for production)
+
+
+
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'app',
+    'rest_framework_simplejwt',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -47,7 +56,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+     
 ]
+
+
 
 ROOT_URLCONF = 'django_login.urls'
 
@@ -121,3 +133,26 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+SECRET_KEY="jwttokendecodesecretkey"
+
+# settings.py
+SIMPLE_JWT = {
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,  # This should be the same as settings.SECRET_KEY
+}
+
+
+# AWS_ACCESS_KEY_ID=
+# AWS_SECRET_ACCESS_KEY=
+
+
+
+
+# settings.py
+
+import os
+
+# Define where media files will be stored
+MEDIA_URL = '/media/'  # This is the URL prefix to access media files
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Where the files are stored on the server
+print("BASE_DIR",MEDIA_ROOT)

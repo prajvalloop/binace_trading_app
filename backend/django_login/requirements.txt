@@ -1,0 +1,6 @@
+django
+djangorestframework
+djangorestframework-simplejwt
+boto3
+django-cors-headers
+jwt
